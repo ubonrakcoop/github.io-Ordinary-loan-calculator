@@ -1,1 +1,805 @@
-วาง code สำหรับ Githup ที่นี่
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>โปรแกรมคำนวณวงเงินกู้สามัญ - สหกรณ์ออมทรัพย์</title>
+  
+  <!-- Google Fonts: Prompt & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #0056b3;
+      --primary-hover: #004085;
+      --secondary: #00a8cc;
+      --bg-light: #f4f8fb;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --danger: #dc2626;
+      --shadow: 0 10px 25px -5px rgba(0, 86, 179, 0.1), 0 8px 10px -6px rgba(0, 86, 179, 0.05);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 20px 10px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Header & Branding */
+    .header-card {
+      background: linear-gradient(135deg, #ffffff 0%, #e6f2ff 100%);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 86, 179, 0.15);
+    }
+
+    .logo {
+      max-width: 140px;
+      height: auto;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+    }
+
+    .header-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* Card Layout */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 10px;
+    }
+
+    /* Form Design */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 576px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      color: #334155;
+    }
+
+    .form-group label small {
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .dob-group {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1.2fr;
+      gap: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: #94a3b8;
+      z-index: 1;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Sarabun', sans-serif;
+      transition: all 0.25s ease;
+      background-color: #f8fafc;
+    }
+
+    .form-control.select-control {
+      padding-left: 36px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2064748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #fff;
+      box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.12);
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #0072ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 86, 179, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-hover) 0%, #005bb5 100%);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(51, 65, 85, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+      transform: translateY(-1px);
+    }
+
+    /* Results Section */
+    .result-section {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Alert / Over 55 Notice */
+    .alert-danger-custom {
+      background-color: #fef2f2;
+      border: 2px solid #fca5a5;
+      padding: 24px 20px;
+      border-radius: var(--radius);
+      color: var(--danger);
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-danger-custom h2 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--danger);
+    }
+
+    /* Result Highlight Box */
+    .res-highlight {
+      background: linear-gradient(135deg, #0056b3 0%, #003d80 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .res-highlight .lbl {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .res-highlight .val {
+      font-family: 'Prompt', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #7dd3fc;
+      line-height: 1.2;
+      margin: 6px 0;
+    }
+
+    /* Result Items Grid */
+    .res-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 576px) {
+      .res-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .res-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .res-item .lbl {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .res-item .num {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background-color: #fffbe0;
+      border: 1px solid #ffe885;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .custom-loan-box {
+      background: #f0f7ff;
+      border: 1.5px dashed var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .custom-loan-box h4 {
+      font-family: 'Prompt', sans-serif;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header Card -->
+  <div class="header-card">
+    <img src="https://ubonrakcoop.wordpress.com/wp-content/uploads/2026/09/logo-e0b8aae0b8b5-png.png" alt="โลโก้สหกรณ์" class="logo">
+    <h1 class="header-title">โปรแกรมคำนวณวงเงินกู้สามัญ</h1>
+    <p class="header-subtitle">บริการสมาชิกสหกรณ์ออมทรัพย์ (ตามระเบียบ พ.ศ. 2566)</p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="card">
+    <div class="card-title">
+      <i class="fa-solid fa-calculator"></i> ข้อมูลประกอบการคำนวณสิทธิ์
+    </div>
+    
+    <form id="loanForm" onsubmit="event.preventDefault(); calculateLoan();">
+      <div class="form-grid">
+        
+        <!-- 1. วันเดือนปีเกิด (พ.ศ.) -->
+        <div class="form-group full-width">
+          <label>วันเดือนปีเกิด <small>(ระบุเป็น พ.ศ.)</small></label>
+          <div class="dob-group">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-calendar-day"></i>
+              <select id="dobDay" class="form-control select-control" required>
+                <option value="">วัน</option>
+              </select>
+            </div>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-calendar-month"></i>
+              <select id="dobMonth" class="form-control select-control" required>
+                <option value="">เดือน</option>
+                <option value="1">มกราคม</option>
+                <option value="2">กุมภาพันธ์</option>
+                <option value="3">มีนาคม</option>
+                <option value="4">เมษายน</option>
+                <option value="5">พฤษภาคม</option>
+                <option value="6">มิถุนายน</option>
+                <option value="7">กรกฎาคม</option>
+                <option value="8">สิงหาคม</option>
+                <option value="9">กันยายน</option>
+                <option value="10">ตุลาคม</option>
+                <option value="11">พฤศจิกายน</option>
+                <option value="12">ธันวาคม</option>
+              </select>
+            </div>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-calendar-week"></i>
+              <input type="number" id="dobYearBE" class="form-control" placeholder="ปี พ.ศ. (เช่น 2520)" min="2450" max="2600" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. จำนวนงวดหุ้น -->
+        <div class="form-group">
+          <label for="stockPeriod">จำนวนงวดที่ชำระค่าหุ้น <small>(งวด)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <input type="number" id="stockPeriod" class="form-control" placeholder="เช่น 24" min="0" required>
+          </div>
+        </div>
+
+        <!-- 3. หุ้นคงเหลือ -->
+        <div class="form-group">
+          <label for="stockBalance">หุ้นคงเหลือ <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-chart-pie"></i>
+            <input type="number" id="stockBalance" class="form-control" placeholder="0.00" min="0" step="any" required>
+          </div>
+        </div>
+
+        <!-- 4. เงินกู้ภาระค้ำประกันคงเหลือ -->
+        <div class="form-group full-width">
+          <label for="guaranteeBalance">เงินกู้ภาระค้ำประกันคงเหลือ <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            <input type="number" id="guaranteeBalance" class="form-control" placeholder="0.00" min="0" step="any" value="0" required>
+          </div>
+        </div>
+
+        <!-- 5. เงินเดือน -->
+        <div class="form-group">
+          <label for="salary">เงินเดือน <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <input type="number" id="salary" class="form-control" placeholder="0.00" min="0" step="any" required>
+          </div>
+        </div>
+
+        <!-- 6. ค่าครองชีพ / ช่วยเหลือ -->
+        <div class="form-group">
+          <label for="allowance">ค่าครองชีพ / ช่วยเหลือ <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <input type="number" id="allowance" class="form-control" placeholder="0.00" min="0" step="any" value="0">
+          </div>
+        </div>
+
+        <!-- 7. เบี้ยขยัน -->
+        <div class="form-group full-width">
+          <label for="diligence">เบี้ยขยัน <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-award"></i>
+            <input type="number" id="diligence" class="form-control" placeholder="0.00" min="0" step="any" value="0">
+          </div>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-calculator"></i> คำนวณวงเงินที่กู้ได้
+      </button>
+    </form>
+  </div>
+
+  <!-- Results Section -->
+  <div id="resultSection" class="result-section">
+    
+    <!-- Notice for Over 55 Years Old -->
+    <div id="over55Notice" class="alert-danger-custom" style="display: none;">
+      <i class="fa-solid fa-circle-exclamation fa-3x" style="margin-bottom: 12px;"></i>
+      <h2>กู้ได้เฉพาะทุนเรือนหุ้น</h2>
+      <p style="font-size: 1.05rem;">เนื่องจากผู้กู้อายุเกิน 55 ปีบริบูรณ์ ตามหลักเกณฑ์ระเบียบการกู้ยืมสามัญของสหกรณ์</p>
+    </div>
+
+    <!-- Maximum Loan Limit Card -->
+    <div id="loanResultCard" class="card" style="display: none;">
+      <div class="card-title">
+        <i class="fa-solid fa-square-poll-vertical"></i> ผลการคำนวณวงเงินกู้สูงสุด
+      </div>
+
+      <div class="res-highlight">
+        <div class="lbl">วงเงินที่กู้ได้โดยประมาณ</div>
+        <div class="val" id="maxLoanLimit">0 บาท</div>
+      </div>
+
+      <div class="res-grid">
+        <div class="res-item" id="stockAddBox">
+          <span class="lbl">จำนวนหุ้นที่ต้องซื้อเพิ่ม</span>
+          <span class="num" id="stockToBuy">0 บาท</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนเงินฝากออมทรัพย์พิเศษที่ต้องมีในบัญชี (5%)</span>
+          <span class="num" id="specialDeposit">0 บาท</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนคนค้ำประกัน</span>
+          <span class="num" id="guarantors">0 คน</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนงวดผ่อนชำระ</span>
+          <span class="num" id="maxInstallments">0 งวด</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">ค่างวดรายเดือน (ลดต้นลดดอก)</span>
+          <span class="num" id="monthlyPayment">0 บาท/เดือน</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">กำหนดเงินสำรองยังชีพ (20% ของเงินได้)</span>
+          <span class="num" id="reserveLiving">0 บาท</span>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>หมายเหตุ: นี่เป็นการคำนวณเบื้องต้นเท่านั้น</span>
+      </div>
+
+      <!-- Section: Custom Loan Request -->
+      <div class="custom-loan-box">
+        <h4><i class="fa-solid fa-pen-to-square"></i> ต้องการกู้ยอดเงินเท่าไหร่?</h4>
+        <div class="form-group">
+          <label for="desiredLoan">จำนวนเงินที่ต้องการกู้ <small>(บาท)</small></label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-coins"></i>
+            <input type="number" id="desiredLoan" class="form-control" placeholder="ระบุยอดเงินที่ต้องการกู้">
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="recalculateCustomLoan()">
+          <i class="fa-solid fa-rotate"></i> คำนวณใหม่
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Custom Requested Amount Result Card -->
+    <div id="customResultCard" class="card" style="display: none; border: 2px solid var(--secondary);">
+      <div class="card-title" style="color: var(--secondary);">
+        <i class="fa-solid fa-chart-pie"></i> ผลการคำนวณตามยอดเงินที่ต้องการกู้
+      </div>
+
+      <div class="res-highlight" style="background: linear-gradient(135deg, #00a8cc 0%, #007799 100%);">
+        <div class="lbl">วงเงินที่ต้องการกู้</div>
+        <div class="val" id="customLoanVal" style="color: #fff;">0 บาท</div>
+      </div>
+
+      <div class="res-grid">
+        <div class="res-item" id="customStockAddBox">
+          <span class="lbl">จำนวนหุ้นที่ต้องซื้อเพิ่ม</span>
+          <span class="num" id="customStockToBuy">0 บาท</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนเงินฝากออมทรัพย์พิเศษที่ต้องมีในบัญชี (5%)</span>
+          <span class="num" id="customSpecialDeposit">0 บาท</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนคนค้ำประกัน</span>
+          <span class="num" id="customGuarantors">0 คน</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">จำนวนงวดผ่อนชำระ</span>
+          <span class="num" id="customInstallments">0 งวด</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">ค่างวดรายเดือน (ลดต้นลดดอก)</span>
+          <span class="num" id="customMonthlyPayment">0 บาท/เดือน</span>
+        </div>
+        <div class="res-item">
+          <span class="lbl">กำหนดเงินสำรองยังชีพ (20% ของเงินได้)</span>
+          <span class="num" id="customReserveLiving">0 บาท</span>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>หมายเหตุ: นี่เป็นการคำนวณเบื้องต้นเท่านั้น</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Populate Days Dropdown
+  window.addEventListener('DOMContentLoaded', () => {
+    const daySelect = document.getElementById('dobDay');
+    for (let i = 1; i <= 31; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      daySelect.appendChild(opt);
+    }
+  });
+
+  // Global Context Store
+  let calculatedContext = null;
+
+  // Function: Determine Share Ratio (%) Based On Calculated Loan Amount
+  function getStockRatioByLoanAmount(loanAmt) {
+    if (loanAmt <= 100000) return 0.35;
+    if (loanAmt <= 200000) return 0.40;
+    if (loanAmt <= 300000) return 0.45;
+    if (loanAmt <= 400000) return 0.50;
+    if (loanAmt <= 500000) return 0.55;
+    if (loanAmt <= 550000) return 0.60;
+    return 0.65; // Up to 650,000 baht
+  }
+
+  // 1. Main Calculation Trigger
+  function calculateLoan() {
+    const day = parseInt(document.getElementById('dobDay').value);
+    const month = parseInt(document.getElementById('dobMonth').value);
+    const yearBE = parseInt(document.getElementById('dobYearBE').value);
+
+    const stockPeriod = parseInt(document.getElementById('stockPeriod').value) || 0;
+    const stockBalance = parseFloat(document.getElementById('stockBalance').value) || 0;
+    const guaranteeBalance = parseFloat(document.getElementById('guaranteeBalance').value) || 0;
+    const salary = parseFloat(document.getElementById('salary').value) || 0;
+    const allowance = parseFloat(document.getElementById('allowance').value) || 0;
+    const diligence = parseFloat(document.getElementById('diligence').value) || 0;
+
+    if (!day || !month || !yearBE) {
+      alert("กรุณาระบุวัน เดือน และปีเกิด (พ.ศ.) ให้ครบถ้วน");
+      return;
+    }
+
+    // Convert B.E. Year to A.D. Year
+    const yearAD = yearBE - 543;
+    const dob = new Date(yearAD, month - 1, day);
+    const today = new Date();
+
+    // Age Calculation
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+
+    const resultSection = document.getElementById('resultSection');
+    const over55Notice = document.getElementById('over55Notice');
+    const loanResultCard = document.getElementById('loanResultCard');
+    const customResultCard = document.getElementById('customResultCard');
+    
+    resultSection.style.display = 'block';
+    customResultCard.style.display = 'none';
+
+    // Rule: Over 55 Years Old -> Only Shares Loan Allowed
+    if (age >= 55) {
+      over55Notice.style.display = 'block';
+      loanResultCard.style.display = 'none';
+      resultSection.scrollIntoView({ behavior: 'smooth' });
+      return;
+    } else {
+      over55Notice.style.display = 'none';
+      loanResultCard.style.display = 'block';
+    }
+
+    // Total Income & 35 Multiplier
+    const totalIncome = salary + allowance + diligence;
+    const income35Multiple = totalIncome * 35;
+
+    // Max Months Calculation (Cap at 84 Months OR months remaining until age 55)
+    const age55Date = new Date(yearAD + 55, month - 1, day);
+    let monthsTo55 = (age55Date.getFullYear() - today.getFullYear()) * 12 + (age55Date.getMonth() - today.getMonth());
+    if (today.getDate() > day) {
+      monthsTo55--;
+    }
+
+    let maxMonths = 84;
+    if (monthsTo55 < 84) {
+      maxMonths = Math.max(0, monthsTo55);
+    }
+
+    // Determine Ceiling Cap According to Stock Period (ระเบียบ พ.ศ. 2566)
+    let maxCap = 0;
+    if (stockPeriod < 12) maxCap = 0;
+    else if (stockPeriod === 12) maxCap = 100000;
+    else if (stockPeriod >= 13 && stockPeriod <= 23) maxCap = 150000;
+    else if (stockPeriod === 24) maxCap = 200000;
+    else if (stockPeriod >= 25 && stockPeriod <= 35) maxCap = 250000;
+    else if (stockPeriod === 36) maxCap = 300000;
+    else if (stockPeriod >= 37 && stockPeriod <= 47) maxCap = 350000;
+    else if (stockPeriod === 48) maxCap = 400000;
+    else if (stockPeriod >= 49 && stockPeriod <= 59) maxCap = 450000;
+    else if (stockPeriod === 60) maxCap = 500000;
+    else if (stockPeriod >= 61 && stockPeriod <= 71) maxCap = 550000;
+    else if (stockPeriod === 72) maxCap = 500000;
+    else if (stockPeriod > 72) maxCap = 650000;
+
+    // Maximum Loan Limit
+    let maxLoanLimit = 0;
+    if (stockPeriod >= 12) {
+      maxLoanLimit = Math.min(maxCap, income35Multiple);
+    }
+
+    // Context Save
+    calculatedContext = {
+      totalIncome,
+      maxLoanLimit,
+      stockBalance,
+      guaranteeBalance,
+      maxMonths
+    };
+
+    // Render Results for Maximum Loan Limit
+    renderResults(maxLoanLimit, maxMonths, stockBalance, guaranteeBalance, totalIncome, 'max');
+    
+    // Smooth Scroll
+    resultSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // 2. Custom Loan Recalculation Trigger
+  function recalculateCustomLoan() {
+    if (!calculatedContext) return;
+
+    const desiredLoanInput = parseFloat(document.getElementById('desiredLoan').value);
+
+    if (isNaN(desiredLoanInput) || desiredLoanInput <= 0) {
+      alert("กรุณากรอกจำนวนเงินกู้ที่ต้องการให้ถูกต้อง");
+      return;
+    }
+
+    if (desiredLoanInput > calculatedContext.maxLoanLimit) {
+      alert("จำนวนเงินที่ต้องการกู้ สูงกว่าวงเงินกู้สูงสุดที่คุณกู้ได้ (" + formatNumber(calculatedContext.maxLoanLimit) + " บาท)");
+      return;
+    }
+
+    const { totalIncome, stockBalance, guaranteeBalance, maxMonths } = calculatedContext;
+
+    renderResults(desiredLoanInput, maxMonths, stockBalance, guaranteeBalance, totalIncome, 'custom');
+
+    const customResultCard = document.getElementById('customResultCard');
+    customResultCard.style.display = 'block';
+    customResultCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Core Result Rendering Function
+  function renderResults(loanAmount, months, stockBalance, guaranteeBalance, totalIncome, mode) {
+    // 1. Determine Share Ratio based on Loan Amount
+    const stockRatio = getStockRatioByLoanAmount(loanAmount);
+    const requiredStock = loanAmount * stockRatio;
+
+    // 2. Additional Stock to Buy = (Required Stock - Existing Stock) + 5% of Guarantee Balance (Round up to tens)
+    const additionalStockRaw = (requiredStock - stockBalance) + (0.05 * guaranteeBalance);
+    const additionalStock = Math.ceil(additionalStockRaw / 10) * 10;
+
+    // 3. Special Savings Deposit (5% of Loan Amount)
+    const specialDeposit = loanAmount * 0.05;
+
+    // 4. Guarantors Count = (Loan Amount - MAX(stockBalance, requiredStock)) / 50,000 (Ceil)
+    const effectiveStock = Math.max(stockBalance, requiredStock);
+    const netLoanForGuarantor = loanAmount - effectiveStock;
+    let guarantors = 0;
+    if (netLoanForGuarantor > 0) {
+      guarantors = Math.ceil(netLoanForGuarantor / 50000);
+    }
+
+    // 5. Monthly EMI (7% Annual Interest, Equal Payment, Round up to tens)
+    const annualRate = 0.07;
+    const monthlyRate = annualRate / 12;
+    let monthlyPayment = 0;
+
+    if (loanAmount > 0 && months > 0) {
+      const pmt = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+      monthlyPayment = Math.ceil(pmt / 10) * 10;
+    }
+
+    // 6. Living Reserve (20% of Total Income)
+    const reserveLiving = totalIncome * 0.20;
+
+    if (mode === 'max') {
+      document.getElementById('maxLoanLimit').innerText = formatNumber(loanAmount) + " บาท";
+      document.getElementById('specialDeposit').innerText = formatNumber(specialDeposit) + " บาท";
+      document.getElementById('guarantors').innerText = guarantors + " คน";
+      document.getElementById('maxInstallments').innerText = months + " งวด";
+      document.getElementById('monthlyPayment').innerText = formatNumber(monthlyPayment) + " บาท/เดือน";
+      document.getElementById('reserveLiving').innerText = formatNumber(reserveLiving) + " บาท";
+
+      const stockAddBox = document.getElementById('stockAddBox');
+      if (additionalStock > 0) {
+        stockAddBox.style.display = 'flex';
+        document.getElementById('stockToBuy').innerText = formatNumber(additionalStock) + " บาท";
+      } else {
+        stockAddBox.style.display = 'none';
+      }
+    } else {
+      document.getElementById('customLoanVal').innerText = formatNumber(loanAmount) + " บาท";
+      document.getElementById('customSpecialDeposit').innerText = formatNumber(specialDeposit) + " บาท";
+      document.getElementById('customGuarantors').innerText = guarantors + " คน";
+      document.getElementById('customInstallments').innerText = months + " งวด";
+      document.getElementById('customMonthlyPayment').innerText = formatNumber(monthlyPayment) + " บาท/เดือน";
+      document.getElementById('customReserveLiving').innerText = formatNumber(reserveLiving) + " บาท";
+
+      const customStockAddBox = document.getElementById('customStockAddBox');
+      if (additionalStock > 0) {
+        customStockAddBox.style.display = 'flex';
+        document.getElementById('customStockToBuy').innerText = formatNumber(additionalStock) + " บาท";
+      } else {
+        customStockAddBox.style.display = 'none';
+      }
+    }
+  }
+
+  // Utility Number Formatter
+  function formatNumber(num) {
+    return num.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+</script>
+
+</body>
+</html>
