@@ -365,13 +365,13 @@
           <div class="dob-group">
             <div class="input-wrapper">
               <i class="fa-solid fa-calendar-day"></i>
-              <select id="dobDay" class="form-control select-control" required>
+              <select id="dobDay" class="form-control select-control" required onkeydown="handleEnterKey(event)">
                 <option value="">วัน</option>
               </select>
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-calendar-month"></i>
-              <select id="dobMonth" class="form-control select-control" required>
+              <select id="dobMonth" class="form-control select-control" required onkeydown="handleEnterKey(event)">
                 <option value="">เดือน</option>
                 <option value="1">มกราคม</option>
                 <option value="2">กุมภาพันธ์</option>
@@ -389,7 +389,7 @@
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-calendar-week"></i>
-              <input type="number" id="dobYearBE" class="form-control" placeholder="ปี พ.ศ. (เช่น 2520)" min="2450" max="2600" required>
+              <input type="number" id="dobYearBE" class="form-control" placeholder="ปี พ.ศ. (เช่น 2520)" min="2450" max="2600" required onkeydown="handleEnterKey(event)">
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@
           <label for="stockPeriod">จำนวนงวดที่ชำระค่าหุ้น <small>(งวด)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-clock-rotate-left"></i>
-            <input type="number" id="stockPeriod" class="form-control" placeholder="เช่น 24" min="0" required>
+            <input type="number" id="stockPeriod" class="form-control" placeholder="เช่น 24" min="0" required onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -408,7 +408,7 @@
           <label for="stockBalance">หุ้นคงเหลือ <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-chart-pie"></i>
-            <input type="number" id="stockBalance" class="form-control" placeholder="0.00" min="0" step="any" required>
+            <input type="number" id="stockBalance" class="form-control" placeholder="0.00" min="0" step="any" required onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -417,7 +417,7 @@
           <label for="guaranteeBalance">เงินกู้ภาระค้ำประกันคงเหลือ <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-hand-holding-dollar"></i>
-            <input type="number" id="guaranteeBalance" class="form-control" placeholder="0.00" min="0" step="any" value="0" required>
+            <input type="number" id="guaranteeBalance" class="form-control" placeholder="0.00" min="0" step="any" value="0" required onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -426,7 +426,7 @@
           <label for="salary">เงินเดือน <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-money-bill-wave"></i>
-            <input type="number" id="salary" class="form-control" placeholder="0.00" min="0" step="any" required>
+            <input type="number" id="salary" class="form-control" placeholder="0.00" min="0" step="any" required onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -435,7 +435,7 @@
           <label for="allowance">ค่าครองชีพ / ช่วยเหลือ <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-hand-holding-heart"></i>
-            <input type="number" id="allowance" class="form-control" placeholder="0.00" min="0" step="any" value="0">
+            <input type="number" id="allowance" class="form-control" placeholder="0.00" min="0" step="any" value="0" onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -444,7 +444,7 @@
           <label for="diligence">เบี้ยขยัน <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-award"></i>
-            <input type="number" id="diligence" class="form-control" placeholder="0.00" min="0" step="any" value="0">
+            <input type="number" id="diligence" class="form-control" placeholder="0.00" min="0" step="any" value="0" onkeydown="handleEnterKey(event)">
           </div>
         </div>
 
@@ -516,7 +516,7 @@
           <label for="desiredLoan">จำนวนเงินที่ต้องการกู้ <small>(บาท)</small></label>
           <div class="input-wrapper">
             <i class="fa-solid fa-coins"></i>
-            <input type="number" id="desiredLoan" class="form-control" placeholder="ระบุยอดเงินที่ต้องการกู้">
+            <input type="number" id="desiredLoan" class="form-control" placeholder="ระบุยอดเงินที่ต้องการกู้" onkeydown="handleEnterKey(event)">
           </div>
         </div>
         <button type="button" class="btn btn-secondary" onclick="recalculateCustomLoan()">
@@ -588,6 +588,27 @@
 
   // Global Context Store
   let calculatedContext = null;
+
+  /**
+   * ENTER KEY NAVIGATION: moves to the next field in the same group; the last field runs the calculation
+   */
+  function handleEnterKey(event) {
+    if (event.key !== 'Enter' || event.isComposing) return;
+    event.preventDefault();
+
+    const scope = event.target.closest('form, .custom-loan-box');
+    const fields = Array.from(scope.querySelectorAll('input, select'));
+    const next = fields[fields.indexOf(event.target) + 1];
+
+    if (next) {
+      next.focus();
+      if (next instanceof HTMLInputElement) next.select();
+    } else if (scope.tagName === 'FORM') {
+      scope.requestSubmit();
+    } else {
+      recalculateCustomLoan();
+    }
+  }
 
   // Function: Determine Share Ratio (%) Based On Calculated Loan Amount
   function getStockRatioByLoanAmount(loanAmt) {
